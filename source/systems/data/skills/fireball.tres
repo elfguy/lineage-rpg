@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/systems/data/skills/skill_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+skill_id = "fireball"
+skill_name = "파이어볼"
+description = "화염구를 발사합니다"
+icon = null
+skill_type = 0
+mp_cost = 20
+cooldown = 3.0
+required_level = 5
+max_level = 5
+prerequisite_skills = []
+base_damage = 50
+damage_per_level = 15
+stats = {}

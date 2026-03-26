@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/systems/data/skills/skill_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+skill_id = "heal"
+skill_name = "힐링"
+description = "자신의 HP를 회복합니다"
+icon = null
+skill_type = 0
+mp_cost = 15
+cooldown = 5.0
+required_level = 3
+max_level = 3
+prerequisite_skills = []
+base_damage = 0
+damage_per_level = 0
+stats = {}
