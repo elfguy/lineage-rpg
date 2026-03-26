@@ -19,6 +19,9 @@ func update(_delta: float) -> void:
 		state_machine.transition_to("attack")
 		return
 
+	# 방향 업데이트
+	player.update_facing(direction)
+	
 	player.velocity = direction * speed
 	player.move_and_slide()
 	EventBus.player_position_changed.emit(player.global_position)

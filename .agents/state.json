@@ -1,0 +1,24 @@
+{
+  "last_check": "2026-03-27T01:20:00+09:00",
+  "agents": {
+    "developer": {
+      "session_id": null,
+      "status": "idle",
+      "current_issue": null,
+      "last_activity": null
+    },
+    "qa": {
+      "session_id": null,
+      "status": "idle",
+      "current_issue": null,
+      "last_activity": null
+    },
+    "reviewer": {
+      "session_id": null,
+      "status": "idle",
+      "current_issue": null,
+      "last_activity": null
+    }
+  },
+  "check_interval_minutes": 30
+}
