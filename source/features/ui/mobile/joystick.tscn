@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/features/ui/mobile/joystick.gd" id="1_joystick"]
+
+[node name="Joystick" type="Node2D" groups=["joystick"]]
+script = ExtResource("1_joystick")
+visible = false
+
+[node name="Base" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.3)
+scale = Vector2(4, 4)
+texture = null
+
+[node name="Stick" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.6)
+scale = Vector2(2, 2)
+texture = null

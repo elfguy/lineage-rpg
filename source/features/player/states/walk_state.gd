@@ -32,6 +32,15 @@ func physics_update(_delta: float) -> void:
 
 func _get_input_direction() -> Vector2:
 	var direction: Vector2 = Vector2.ZERO
+	
+	# 키보드 입력
 	direction.x = Input.get_axis("move_left", "move_right")
 	direction.y = Input.get_axis("move_forward", "move_backward")
+	
+	# 조이스틱 입력 (모바일)
+	if direction == Vector2.ZERO:
+		var joystick: Node = get_tree().get_first_node_in_group("joystick")
+		if joystick and joystick.has_method("get_output"):
+			direction = joystick.get_output()
+	
 	return direction.normalized()

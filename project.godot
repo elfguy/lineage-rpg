@@ -22,11 +22,11 @@ SaveManager="*res://source/systems/save_manager.gd"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=393
+window/size/viewport_height=852
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep"
-window/handheld/orientation=1
+window/handheld/orientation=0
 
 [input_devices]
 
