@@ -28,9 +28,9 @@ func compute_visibility(origin: Vector2i) -> void:
 
 func _cast_light(origin: Vector2i, corners: Array[Vector2i]) -> void:
 	for i: int in range(corners.size()):
-		_cast_ray(origin, corners[i], i, corners[(i + 1) % corners.size()])
+		_cast_ray(origin, corners[i], corners[(i + 1) % corners.size()])
 
-func _cast_ray(start: Vector2i, target: Vector2i, start_angle: int, end_angle: int) -> void:
+func _cast_ray(start: Vector2i, target: Vector2i, _end_target: Vector2i) -> void:
 	var dx: float = target.x - start.x
 	var dy: float = target.y - start.y
 	var distance: float = sqrt(dx * dx + dy * dy)
@@ -38,21 +38,12 @@ func _cast_ray(start: Vector2i, target: Vector2i, start_angle: int, end_angle: i
 		return
 
 	var angle: float = atan2(dy, dx)
-	var s_angle: float = start_angle
-	var e_angle: float = end_angle
+	var s_angle: float = atan2(target.y - start.y, target.x - start.x)
+	var e_angle: float = s_angle + 0.5
 
-	if s_angle <= e_angle:
-		while angle >= s_angle and angle <= e_angle:
-			_process_angle(origin, angle, radius)
-			angle += 0.01
-	else:
-		while angle <= e_angle:
-			_process_angle(origin, angle, radius)
-			angle += 0.01
-		angle = -3.14159265359
-		while angle <= e_angle:
-			_process_angle(origin, angle, radius)
-			angle += 0.01
+	while angle >= s_angle and angle <= e_angle:
+		_process_angle(start, angle, radius)
+		angle += 0.01
 
 func _process_angle(origin: Vector2i, angle: float, max_radius: int) -> void:
 	var x: int = round(origin.x + cos(angle) * max_radius)
@@ -71,7 +62,7 @@ func is_wall(cell: Vector2i) -> bool:
 		return false
 	return wall_layer.get_cell_source_id(cell) != -1
 
-func is_visible(cell: Vector2i) -> bool:
+func check_visible(cell: Vector2i) -> bool:
 	return cell in visible_cells
 
 func is_explored(cell: Vector2i) -> bool:
