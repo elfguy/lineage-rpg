@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/elfguy/alba/games/lineage-rpg && if [ -f \".claude/hooks/gdscript-lint.sh\" ]; then .claude/hooks/gdscript-lint.sh \"$CLAUDE_TOOL_INPUT_FILE_PATH\"; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "게임 빌드가 정상인지, Godot 프로젝트 에러가 없는지, 모든 테스트가 통과하는지 확인. 문제가 있으면 {\"ok\": false, \"reason\": \"구체적 문제\"} 반환. 완벽하면 {\"ok\": true} 반환.",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}
