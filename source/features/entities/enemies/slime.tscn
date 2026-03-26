@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://source/features/entities/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Script" path="res://source/features/combat/health_component.gd" id="2_health"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_slime"]
+size = Vector2(24, 24)
+
+[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
+script = ExtResource("1_enemy")
+enemy_name = &"Slime"
+max_health = 30
+attack_power = 5
+defense = 2
+move_speed = 80.0
+detection_range = 150.0
+attack_range = 40.0
+experience_reward = 10
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+color = Color(0.4, 0.2, 0.6, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." shape=SubResource("RectangleShape2D_slime")]
+
+[node name="HealthComponent" type="Node" parent="." script=ExtResource("2_health")]
+max_health = 30
+current_health = 30
