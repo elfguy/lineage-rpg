@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EquipmentResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/systems/data/items/equipment_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = "leather_armor"
+item_name = "가죽 갑옷"
+description = "기본 방어구"
+icon = null
+item_type = 1
+stackable = false
+max_stack = 1
+value = 80
+stats = {}
+equip_slot = 1
+attack_bonus = 0
+defense_bonus = 10
+hp_bonus = 20
+mp_bonus = 0
