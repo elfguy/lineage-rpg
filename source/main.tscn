@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://source/features/map/map_manager.gd" id="1_mapmanager"]
+[ext_resource type="PackedScene" path="res://source/features/player/player.tscn" id="2_player"]
+
+[node name="Main" type="Node"]
+
+[node name="MapManager" type="Node2D" parent="." script=ExtResource("1_mapmanager")]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
