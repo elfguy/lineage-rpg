@@ -10,6 +10,7 @@
 4. [하네스 엔지니어링 원칙](#4-하네스-엔지니어링-원칙)
 5. [멀티 에이전트 검증 시스템](#5-멀티-에이전트-검증-시스템)
 6. [OpenCode 설정](#6-opencode-설정)
+   - [6.6 GitHub Issues 워크플로우](#66-github-issues-워크플로우)
 7. [Godot 4 게임 아키텍처](#7-godot-4-게임-아키텍처)
 8. [리니지 스타일 2D RPG 시스템](#8-리니지-스타일-2d-rpg-시스템)
 9. [파일 구조](#9-파일-구조)
@@ -31,8 +32,10 @@
 | 게임 엔진 | **Godot 4.x** | 오픈소스, 2D 강점, GDScript의 AI 친화적 문법 |
 | 언어 | **GDScript** (strict type hints) | Godot 네이티브, 타입 힌트로 AI 환각 감소 |
 | AI 프레임워크 | **OpenCode (OhMyOpenCode)** | Ultrawork Loop, 커스텀 에이전트, Hooks, Skills 내장 |
-| 에이전트 오케스트레이션 | **OpenCode Task System** | 병렬 에이전트 실행, 세션 연속성, 백그라운드 작업 |
-| 버전 관리 | **Git + GitHub** | 에이전트 간 작업 분리, 충돌 방지 |
+  | 에이전트 오케스트레이션 | **OpenCode Task System** | 병렬 에이전트 실행, 세션 연속성, 백그라운드 작업 |
+  | 에이전트 모델 | **GLM-5-turbo** | OpenCode에 연결된 단일 모델, 모든 에이전트에 사용 |
+  | 버전 관리 | **Git + GitHub** | 에이전트 간 작업 분리, 충돌 방지 |
+  | 이슈 관리 | **GitHub Issues** | 작업 추적, 학습 패턴, 리뷰 피드백 |
 
 ### 1.3 접근 방식
 
@@ -45,72 +48,112 @@
 
 ## 2. 자율 순환 아키텍처
 
-### 2.1 5단계 자율 순환 루프
+### 2.1 자율 개발 루프 (Self-Improving Development Cycle)
 
-에이전트가 매 기능 개발 시 다음 5단계를 순차적으로, 필요시 반복적으로 수행한다:
+에이전트가 **스스로** 기획→설계→구현→검증→리뷰→학습 단계를 반복하며 점진적으로 고도화한다.
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                     🔄 자율 순환 루프                              │
-│                                                                   │
-│   ① PLAN ──→ ② DESIGN ──→ ③ IMPLEMENT ──→ ④ VERIFY ──→ ⑤ REVIEW  │
-│       ↑                                                          │
-│       └──────────────── Learn (학습) ←──────────────────────────┘  │
-│                                                                   │
-│   ⚡ 각 단계에서 Critic 에이전트가 품질 검증                        │
-│   ⚡ 실패 시 피드백과 함께 이전 단계로 되돌아감                     │
-│   ⚡ 성공 시 Knowledge Base(GAME_AGENTS.md)에 패턴 누적             │
-└──────────────────────────────────────────────────────────────────┘
+                    ┌─────────────────────────────┐
+                    │     사용자 요청 (최초 1회)     │
+                    └─────────────┬───────────────┘
+                                  ▼
+                    ┌─────────────────────────────┐
+                    │   Phase 1: 기획 (Planning)   │
+                    │   Prometheus + Metis          │
+                    │   GitHub Issue 생성           │
+                    └─────────────┬───────────────┘
+                                  ▼
+                    ┌─────────────────────────────┐
+                    │   Phase 2: 설계 (Design)     │
+                    │   Game Architect + Oracle     │
+                    │   아키텍처 결정 문서화         │
+                    └─────────────┬───────────────┘
+                                  ▼
+                    ┌─────────────────────────────┐
+                    │   Phase 3: 구현 (Implement)  │
+                    │   GDScript Writer + Hephaestus│
+                    │   코드 + 테스트 작성           │
+                    └─────────────┬───────────────┘
+                                  ▼
+                    ┌─────────────────────────────┐
+                    │   Phase 4: 검증 (Verify)     │
+                    │   QA Tester + Hooks           │
+                    │   테스트 + 빌드 + 린트         │
+                    └─────────────┬───────────────┘
+                                  ▼
+                    ┌─────────────────────────────┐
+                    │   Phase 5: 리뷰 (Review)     │
+                    │   Game Reviewer (4관점) + Momus│
+                    │   품질 게이트 통과 여부 판정   │
+                    └─────────────┬───────────────┘
+                                  ▼
+                         ┌───────┴───────┐
+                         │  통과?         │
+                    ┌────┴────┐     ┌────┴────┐
+                    │  YES    │     │  NO     │
+                    └────┬────┘     └────┬────┘
+                         ▼               ▼
+                    ┌─────────┐   ┌────────────────┐
+                    │ 학습    │   │ 피드백 반영     │
+                    │ 패턴    │   │ Phase 3~5 재실행│
+                    │ 기록    │   └───────┬────────┘
+                    └────┬────┘           │
+                         │               │
+                         └───────┬───────┘
+                                 ▼
+                    ┌─────────────────────────────┐
+                    │   다음 GitHub Issue로 이동    │
+                    │   또는 Ultrawork Loop 계속     │
+                    └─────────────────────────────┘
 ```
 
-### 2.2 각 단계 상세
+### 2.2 상태 관리 (GitHub Issues)
 
-#### ① PLAN (기획)
+에이전트의 순환 상태는 **GitHub Issues**를 통해 관리한다:
 
-- **역할**: Prometheus 에이전트가 요구사항 분석, 작업 분해, 의존성 매핑
-- **산출물**: 작업 그래프 (task graph), 마일스톤 정의
-- **검증**: Metis 에이전트가 갭 분석 — 모호한 점, 누락된 요구사항 식별
+| 상태 항목 | GitHub Issues로 관리 |
+|----------|-------------------|
+| 작업 큐 | `label:"todo"` 또는 `label:"phase-N"` 이슈 목록 |
+| 현재 작업 | `assignee`가 에이전트로 설정된 이슈 |
+| 루프 반복 횟수 | 이슈 코멘트에 기록 |
+| 피드백/학습 | `label:"learned"` 이슈 또는 코멘트 |
+| 완료 작업 | `state:closed` 이슈 |
 
-#### ② DESIGN (설계)
+```bash
+# 에이전트가 사용하는 gh CLI 예시
+gh issue list --label "phase-2,todo"           # 다음 작업 조회
+gh issue view $ISSUE_ID                        # 작업 상세 확인
+gh issue comment $ISSUE_ID -b "검증 완료: PASS" # 결과 기록
+gh issue close $ISSUE_ID                        # 작업 완료
+gh issue create --title "..." --label "learned" # 학습 패턴 기록
+```
 
-- **역할**: Game Architect 에이전트가 시스템 아키텍처 설계
-- **산출물**: 시스템 다이어그램, 인터페이스 정의, 데이터 모델
-- **검증**: Oracle 에이전트가 아키텍처 검토 — 확장성, 일관성, 복잡도
+### 2.3 자가 개선 메커니즘
 
-#### ③ IMPLEMENT (구현)
+**Reflexion 패턴** 기반으로 에이전트가 자신의 출력을 비판하고 개선:
 
-- **역할**: GDScript Writer 에이전트가 코드 생성
-- **산출물**: GDScript 소스, .tscn 씬 파일, .tres 리소스
-- **검증**: PostToolUse Hook이 실시간 린트/포맷 검사
+1. **실행**: 에이전트가 코드/설계 산출
+2. **비판**: 전문 에이전트(Critic)가 4가지 관점으로 리뷰
+3. **반성**: 피드백을 바탕으로 접근법 수정
+4. **재시도**: 수정된 접근법으로 재구현
+5. **학습**: 성공/실패 패턴을 GitHub Issue(`label:learned`)에 기록
+6. **적용**: 다음 작업에서 학습된 패턴을 AGENTS.md/GAME_AGENTS.md에 반영
 
-#### ④ VERIFY (검증)
+### 2.4 Ralph/Ultrawork Loop와의 통합
 
-- **역할**: QA Tester 에이전트가 자동 테스트 생성 및 실행
-- **산출물**: 테스트 결과, 커버리지 보고서
-- **검증**: 모든 테스트 통과 + 빌드 에러 0
-
-#### ⑤ REVIEW (리뷰)
-
-- **역할**: Game Reviewer 에이전트가 4가지 관점으로 다중 비판 (MAR 패턴)
-- **산출물**: 피드백 보고서, 수정 우선순위
-- **학습**: 성공/실패 패턴을 GAME_AGENTS.md에 누적
-
-### 2.3 순환 제어 메커니즘
-
-```mermaid
-graph TD
-    A[사용자: Ultrawork 시작] --> B[Plan 단계]
-    B -->|검증 통과| C[Design 단계]
-    B -->|검증 실패| B
-    C -->|검증 통과| D[Implement 단계]
-    C -->|검증 실패| C
-    D -->|검증 통과| E[Verify 단계]
-    D -->|검증 실패| D
-    E -->|모든 테스트 통과| F[Review 단계]
-    E -->|테스트 실패| D
-    F -->|승인| G[Learn + Knowledge Update]
-    F -->|수정 필요| D
-    G --> H[DONE - 루프 종료]
+```
+사용자: "ultrawork: 전투 시스템을 구현해줘"
+  │
+  ▼
+Sisyphus (오케스트레이터)
+  │
+  ├── 1. GitHub Issues에서 관련 이슈 조회/생성
+  ├── 2. Prometheus가 작업 분해 → 개별 이슈 생성
+  ├── 3. 각 이슈를 병렬 에이전트에 위임
+  ├── 4. 완료된 이슈의 결과를 리뷰
+  ├── 5. 실패한 이슈는 피드백과 함께 재시도
+  ├── 6. 모든 이슈 완료 시 GAME_AGENTS.md 업데이트
+  └── 7. 다음 Phase 이슈로 자동 진행
 ```
 
 ---
@@ -121,14 +164,14 @@ graph TD
 
 | 에이전트 | 모델 | 역할 | 게임 개발 활용 |
 |----------|------|------|---------------|
-| **Sisyphus** | Claude Opus | 메인 오케스트레이터 | 전체 워크플로우 조율, Ultrawork 루프 구동 |
-| **Prometheus** | Claude Opus | 전략적 기획 | 게임 기획서, 작업 분해, 마일스톤 관리 |
-| **Oracle** | GPT-5.4 High | 고수준 reasoning | 아키텍처 결정, 복잡한 문제 해결 |
-| **Metis** | Claude Opus | 사전 기획 검토 | 요구사항 갭 분석, 모호성 해소 |
-| **Momus** | Claude Opus | 품질 리뷰어 | 작업 계획 검증, 완성도 평가 |
-| **Hephaestus** | GPT-5.3 Codex | 코드 구현 | 실제 GDScript 코드 작성 |
-| **Librarian** | Gemini Flash | 외부 문서 리서치 | Godot API, GDScript 문서 참고 |
-| **Explore** | Grok Fast | 코드 베이스 탐색 | 기존 패턴 분석, 일관성 검사 |
+| **Sisyphus** | GLM-5-turbo | 메인 오케스트레이터 | 전체 워크플로우 조율, Ultrawork 루프 구동 |
+| **Prometheus** | GLM-5-turbo | 전략적 기획 | 게임 기획서, 작업 분해, 마일스톤 관리 |
+| **Oracle** | GLM-5-turbo | 고수준 reasoning | 아키텍처 결정, 복잡한 문제 해결 |
+| **Metis** | GLM-5-turbo | 사전 기획 검토 | 요구사항 갭 분석, 모호성 해소 |
+| **Momus** | GLM-5-turbo | 품질 리뷰어 | 작업 계획 검증, 완성도 평가 |
+| **Hephaestus** | GLM-5-turbo | 코드 구현 | 실제 GDScript 코드 작성 |
+| **Librarian** | GLM-5-turbo | 외부 문서 리서치 | Godot API, GDScript 문서 참고 |
+| **Explore** | GLM-5-turbo | 코드 베이스 탐색 | 기존 패턴 분석, 일관성 검사 |
 
 ### 3.2 신설 커스텀 에이전트
 
@@ -360,41 +403,35 @@ while consensus.has_blocking_issues:
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-openagent.schema.json",
 
-  "agents": {
+    "agents": {
     "sisyphus": {
-      "model": "anthropic/claude-opus-4-6",
-      "ultrawork": { "model": "anthropic/claude-opus-4-6", "variant": "max" }
+      "model": "glm-5-turbo",
+      "ultrawork": { "model": "glm-5-turbo" }
     },
-    "hephaestus": { "model": "openai/gpt-5.3-codex" },
-    "prometheus": { "model": "anthropic/claude-opus-4-6" },
-    "oracle": { "model": "openai/gpt-5.4", "variant": "high" },
-    "librarian": { "model": "google/gemini-3-flash" },
-    "explore": { "model": "github-copilot/grok-code-fast-1" }
+    "hephaestus": { "model": "glm-5-turbo" },
+    "prometheus": { "model": "glm-5-turbo" },
+    "oracle": { "model": "glm-5-turbo" },
+    "librarian": { "model": "glm-5-turbo" },
+    "explore": { "model": "glm-5-turbo" }
   },
 
   "categories": {
     "game-logic": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "glm-5-turbo",
       "description": "Game mechanics, physics, AI behavior"
     },
     "visual-engineering": {
-      "model": "google/gemini-3.1-pro",
-      "variant": "high",
+      "model": "glm-5-turbo",
       "description": "UI, animations, graphics"
     },
     "testing": {
-      "model": "openai/gpt-5-nano",
+      "model": "glm-5-turbo",
       "description": "Unit tests, integration tests"
     }
   },
 
   "background_task": {
-    "defaultConcurrency": 8,
-    "providerConcurrency": {
-      "anthropic": 4,
-      "openai": 6,
-      "google": 10
-    }
+    "defaultConcurrency": 5
   },
 
   "experimental": {
@@ -693,6 +730,143 @@ User: "ultrawork: 플레이어 이동 시스템을 구현해줘"
 # 3. Ralph Loop가 완료될 때까지 자동으로 계속
 # 4. 모든 품질 게이트 통과 시 DONE
 # 5. 통과 못하면 피드백과 함께 재시도
+```
+
+### 6.6 GitHub Issues 워크플로우
+
+모든 작업 추적, 피드백, 학습 기록은 **GitHub Issues**를 통해 관리한다.
+
+#### 라벨 시스템
+
+| 라벨 | 색상 | 용도 | 예시 |
+|------|------|------|------|
+| `feature` | 🟢 green | 새 기능 개발 | "전투 시스템 구현" |
+| `bug` | 🔴 red | 버그 수정 | "스프라이트 z-order 깨짐" |
+| `refactor` | 🟡 yellow | 리팩토링 | "상태 머신 패턴 정리" |
+| `review` | 🟣 purple | 리뷰 요청 | "아키텍처 리뷰 필요" |
+| `learned` | 🔵 blue | 학습된 패턴 | "GDScript @onready 타이밍 주의" |
+| `phase-1` ~ `phase-5` | 각 색상 | 로드맵 단계 | Phase 1: 하네스 구축 |
+| `blocking` | ⚫ dark | 차단 이슈 | "빌드 에러 수정 필요" |
+| `todo` | ⚪ gray | 대기 중 | 자동 생성 |
+
+#### 이슈 템플릿
+
+**기능 이슈 (`feature`)**:
+```markdown
+## 🎮 [기능명]
+
+### 목표
+[이 기능으로 달성할 것]
+
+### 완료 조건
+- [ ] [조건 1]
+- [ ] [조건 2]
+
+### 관련 시스템
+- [의존하는 시스템]
+
+### 검증 기준
+- [테스트/빌드 조건]
+```
+
+**리뷰 피드백 (`review`)**:
+```markdown
+## 🔍 리뷰: [대상]
+
+### 관점별 결과
+| 관점 | 판정 | 상세 |
+|------|------|------|
+| 🎮 게임플레이 | PASS/FAIL | |
+| 🔧 기술 | PASS/FAIL | |
+| 🎨 시각 | PASS/FAIL | |
+| 🛡️ 안정성 | PASS/FAIL | |
+
+### 차단 이슈 (BLOCKING)
+1. [파일:행] 설명
+
+### 사소한 이슈 (MINOR)
+1. [파일:행] 설명
+
+### 승인 여부: YES / NO
+```
+
+**학습 패턴 (`learned`)**:
+```markdown
+## 📝 학습된 패턴: [제목]
+
+### 원인
+[무엇을 시도했고 왜 실패/성공했는지]
+
+### 패턴
+[따라야 할 패턴 또는 피해야 할 안티패턴]
+
+### 적용 대상
+- [어떤 시스템/파일에 적용]
+
+### GAME_AGENTS.md 반영
+- [ ] AGENTS.md에 규칙 추가
+- [ ] GAME_AGENTS.md에 패턴 기록
+```
+
+#### 에이전트용 gh CLI 워크플로우
+
+```bash
+# === 작업 시작 시 ===
+
+# 1. 현재 Phase의 대기 이슈 조회
+gh issue list --label "phase-2,todo" --state open --limit 10
+
+# 2. 작업 시작 — 이슈에 assignee 설정
+gh issue edit $ISSUE_ID --add-assignee "lineage-rpg-agent"
+
+# 3. 진행 상황 코멘트
+gh issue comment $ISSUE_ID -b "### 🔨 작업 시작
+- 담당 에이전트: game-architect
+- 시작 시간: $(date)"
+
+# === 검증 완료 시 ===
+
+# 4. 결과 코멘트
+gh issue comment $ISSUE_ID -b "### ✅ 검증 완료
+- 테스트: 12/12 PASS
+- 빌드: 에러 0
+- 커버리지: 85%
+- **판정: PASS**"
+
+# 5. 이슈 종료
+gh issue close $ISSUE_ID --comment "모든 완료 조건 충족. Phase 2 진행."
+
+# === 리뷰 실패 시 ===
+
+# 6. 피드백 이슈 생성
+gh issue create \
+  --title "리뷰: $FEATURE_NAME" \
+  --label "review,blocking" \
+  --body "$(cat review-template.md)"
+
+# 7. 기존 이슈에 차단 참조
+gh issue comment $ISSUE_ID -b "⚠️ 리뷰 실패. 차단 이슈: #$REVIEW_ID"
+
+# === 학습 패턴 발견 시 ===
+
+# 8. 학습 이슈 생성
+gh issue create \
+  --title "학습: GDScript @onready는 _ready() 이후 초기화" \
+  --label "learned" \
+  --body "### 패턴
+@onready 변수는 _ready() 콜백 이후에만 유효합니다.
+_init()에서 @onready 변수에 접근하면 null 참조가 발생합니다.
+
+### 적용
+모든 GDScript 파일의 코드 순서 규칙에 추가."
+
+# === Phase 진행 상황 확인 ===
+
+# 9. Phase별 진행률
+echo "Phase 2 진행률:"
+echo "  대기: $(gh issue list --label "phase-2,todo" --state open --json number -q '.[].number' | wc -l)"
+echo "  진행: $(gh issue list --label "phase-2" --state open --assignee "lineage-rpg-agent" --json number -q '.[].number' | wc -l)"
+echo "  완료: $(gh issue list --label "phase-2" --state closed --json number -q '.[].number' | wc -l)"
 ```
 
 ---
@@ -1033,10 +1207,10 @@ World Server(s) (게임플레이)
 ├── AGENTS.md                            # ★ 전역 에이전트 지시서
 ├── GAME_AGENTS.md                       # ★ 게임 도메인 지식 (학습 누적)
 │
-├── .sisyphus/
-│   ├── state.json                      # 루프 상태
-│   ├── tasks/                          # 작업 추적
-│   └── reflections/                    # 피드백/학습 기록
+│
+│  # GitHub Issues로 작업 추적 (자세한 내용은 섹션 6.6 참조)
+│  # - 라벨: feature, bug, review, learned, phase-1~5
+│  # - 에이전트가 gh issue CLI로 이슈 생성/업데이트/종료
 │
 ├── docs/                                # 설계 문서
 │   ├── architecture.md
