@@ -1,14 +1,18 @@
 ; Engine configuration file.
-; It's best edited using the editor UI and not directly,
-; since comments are not preserved by the Godot editor.
 
 config_version=5
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
 config/name="LineageRPG"
 run/main_scene="res://source/main.tscn"
 config/features=PackedStringArray("4.6", "Mobile")
+boot_splash/show_image=false
+config/icon="res://icon.png"
 
 [autoload]
 
@@ -22,7 +26,11 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep"
-window/handheld/orientation="landscape"
+window/handheld/orientation=1
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [input]
 
@@ -52,15 +60,8 @@ attack={
 ]
 }
 
-[layer_names]
-
-2d_physics/layer_1="walls"
-2d_physics/layer_2="player"
-2d_physics/layer_3="entities"
-2d_render/layer_1="ground"
-2d_render/layer_2="walls"
-2d_render/layer_3="overlay"
-
 [rendering]
 
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true
 textures/canvas_textures/default_texture_filter=3
