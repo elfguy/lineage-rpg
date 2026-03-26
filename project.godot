@@ -6,9 +6,9 @@ config_version=5
 
 [application]
 
-config/name="Lineage RPG"
+config/name="LineageRPG"
 run/main_scene="res://source/main.tscn"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.6", "Mobile")
 
 [autoload]
 

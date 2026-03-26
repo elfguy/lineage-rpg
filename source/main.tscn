@@ -1,10 +1,16 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://source/features/map/map_manager.gd" id="1_mapmanager"]
 [ext_resource type="PackedScene" path="res://source/features/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://source/features/ui/hud/hud.tscn" id="3_hud"]
+[ext_resource type="Script" path="res://source/systems/game_starter.gd" id="4_starter"]
 
 [node name="Main" type="Node"]
 
 [node name="MapManager" type="Node2D" parent="." script=ExtResource("1_mapmanager")]
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+
+[node name="GameStarter" type="Node" parent="." script=ExtResource("4_starter")]
