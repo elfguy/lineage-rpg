@@ -18,8 +18,9 @@ signal enemy_defeated(enemy: Enemy, position: Vector2)
 @export var experience_reward: int = 10
 
 @onready var health_component: HealthComponent = $HealthComponent
-@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var sprite: ColorRect = $ColorRect
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var health_bar: Node2D = $HealthBar
 
 var player_ref: CharacterBody2D = null
 var is_chasing: bool = false
@@ -32,6 +33,10 @@ func _ready() -> void:
 		health_component.current_health = max_health
 		health_component.died.connect(_on_died)
 		health_component.health_changed.connect(_on_health_changed)
+	
+	# HP 바 초기화
+	if health_bar:
+		health_bar.setup(max_health, max_health)
 
 func _process(delta: float) -> void:
 	if not player_ref or health_component.is_dead:
@@ -87,4 +92,6 @@ func _defeat() -> void:
 	queue_free()
 
 func _on_health_changed(current: int, maximum: int) -> void:
-	pass
+	# HP 바 업데이트
+	if health_bar:
+		health_bar.set_health(current)
