@@ -13,8 +13,9 @@ signal enemy_defeated(enemy: Enemy, position: Vector2)
 @export var move_speed: float = 80.0
 @export var detection_range: float = 150.0
 @export var attack_range: float = 40.0
-@export var drop_item_id: String = ""
+@export var drop_item_id: String = "gold"
 @export var drop_item_chance: float = 0.3
+@export var drop_item_scene: PackedScene = preload("res://source/features/entities/items/gold.tscn")
 @export var experience_reward: int = 10
 
 @onready var health_component: HealthComponent = $HealthComponent
@@ -89,7 +90,23 @@ func _defeat() -> void:
 	EventBus.enemy_died.emit(self, global_position)
 	EventBus.experience_gained.emit(experience_reward)
 	enemy_defeated.emit(self, global_position)
+	
+	# 아이템 드랍
+	_drop_item()
+	
 	queue_free()
+
+func _drop_item() -> void:
+	"""아이템 드랍"""
+	if randf() > drop_item_chance:
+		return
+	
+	if not drop_item_scene:
+		return
+	
+	var item: Node = drop_item_scene.instantiate()
+	item.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
+	get_tree().current_scene.add_child(item)
 
 func _on_health_changed(current: int, maximum: int) -> void:
 	# HP 바 업데이트

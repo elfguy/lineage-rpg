@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://source/features/entities/items/dropped_item.gd" id="1_item"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_item"]
+size = Vector2(16, 16)
+
+[node name="Gold" type="Area2D" groups=["item"]]
+script = ExtResource("1_item")
+item_id = &"gold"
+item_name = &"골드"
+amount = 10
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(1, 0.84, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." shape=SubResource("RectangleShape2D_item")]
