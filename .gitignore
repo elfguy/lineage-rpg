@@ -1,8 +1,7 @@
 # Godot 4
 .godot/
 *.import
-export_presets.cfg
-!export_presets.cfg.templ
+# export_presets.cfg is tracked for this project
 
 # OS
 .DS_Store
