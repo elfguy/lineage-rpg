@@ -27,3 +27,7 @@ __pycache__/
 *.apk
 *.zip
 *.tar.gz
+*.aar
+
+# Android build artifacts
+android/build/libs/
