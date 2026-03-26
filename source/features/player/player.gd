@@ -9,6 +9,7 @@ const SPEED: float = 200.0
 var direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
+	add_to_group("player")
 	EventBus.player_position_changed.emit(global_position)
 
 func _process(delta: float) -> void:

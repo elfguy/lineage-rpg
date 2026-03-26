@@ -9,7 +9,7 @@ extends Control
 func update_player_position(global_pos: Vector2) -> void:
 	var player_dot: Control = minimap_container.get_node_or_null("PlayerDot")
 	if player_dot:
-		var map_pos: Vector2 = global_pos / (map_size * Vector2(32, 32))
+		var map_pos: Vector2 = global_pos / (Vector2(map_size) * Vector2(32, 32))
 		player_dot.position = map_pos * minimap_container.size
 
 func update_explored_cells(cells: Array[Vector2i]) -> void:
