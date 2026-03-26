@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="QuestResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/systems/data/quests/quest_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+quest_id = "slime_hunt"
+quest_name = "슬라임 처치"
+description = "마을 주변의 슬라임 5마리를 처치하세요"
+quest_type = 0
+target_id = "Slime"
+target_count = 5
+experience_reward = 50
+gold_reward = 20
+item_rewards = Array[StringName](["hp_potion", "hp_potion"])
+required_level = 1
+prerequisite_quests = Array[StringName]([])

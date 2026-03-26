@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="NPCResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/systems/data/characters/npc_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+npc_id = "merchant"
+npc_name = "상인"
+dialogue = Array[StringName](["어서오세요!", "좋은 물건 많아요."])
+available_quests = Array[StringName]([])
+shop_items = Array[StringName](["hp_potion", "mp_potion", "iron_sword", "leather_armor"])
+sprite_path = ""

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="NPCResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/systems/data/characters/npc_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+npc_id = "guard"
+npc_name = "경비병"
+dialogue = Array[StringName](["마을에 오신 것을 환영합니다!", "최근 주변에 슬라임이 늘어났어요.", "조심해서 다니세요."])
+available_quests = Array[StringName](["slime_hunt"])
+shop_items = Array[StringName]([])
+sprite_path = ""
