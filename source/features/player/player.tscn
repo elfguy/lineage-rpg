@@ -21,6 +21,12 @@ color = Color(0, 0, 1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." shape=SubResource("RectangleShape2D_collision")]
 
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+limit_smoothed = true
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
 [node name="StateMachine" type="Node" parent="." script=ExtResource("2_statemachine")]
 initial_state = NodePath("Idle")
 

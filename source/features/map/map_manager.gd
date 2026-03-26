@@ -14,8 +14,65 @@ signal map_changed(new_map_id: String)
 @onready var wall_layer: TileMapLayer = $WallLayer
 @onready var overlay_layer: TileMapLayer = $OverlayLayer
 
+# 간단한 색상 타일셋 (프로시저럴)
+var _tile_set: TileSet
+
 func _ready() -> void:
+	_create_tileset()
+	_generate_map()
 	EventBus.map_entered.emit(map_id)
+
+## 기본 타일셋 생성 (프로시저럴)
+func _create_tileset() -> void:
+	_tile_set = TileSet.new()
+	_tile_set.tile_size = tile_size
+	
+	# 그라운드 타일 (ID: 0) - 초록색
+	var ground_texture: ImageTexture = _create_color_texture(Color(0.2, 0.4, 0.2))
+	var ground_source: TileSetAtlasSource = TileSetAtlasSource.new()
+	ground_source.texture = ground_texture
+	ground_source.texture_region_size = Vector2i(32, 32)
+	_tile_set.add_source(ground_source, 0)
+	ground_source.create_tile(Vector2i(0, 0))
+	
+	# 벽 타일 (ID: 1) - 회색
+	var wall_texture: ImageTexture = _create_color_texture(Color(0.3, 0.3, 0.3))
+	var wall_source: TileSetAtlasSource = TileSetAtlasSource.new()
+	wall_source.texture = wall_texture
+	wall_source.texture_region_size = Vector2i(32, 32)
+	_tile_set.add_source(wall_source, 1)
+	wall_source.create_tile(Vector2i(0, 0))
+	
+	ground_layer.tile_set = _tile_set
+	wall_layer.tile_set = _tile_set
+
+## 색상 텍스처 생성
+func _create_color_texture(color: Color) -> ImageTexture:
+	var image := Image.create(32, 32, false, Image.FORMAT_RGBA8)
+	image.fill(color)
+	var texture := ImageTexture.create_from_image(image)
+	return texture
+
+## 맵 생성 (간단한 테스트 맵)
+func _generate_map() -> void:
+	# 전체 그라운드
+	for x in range(map_size.x):
+		for y in range(map_size.y):
+			ground_layer.set_cell(Vector2i(x, y), 0, Vector2i.ZERO)
+	
+	# 벽 테두리
+	for x in range(map_size.x):
+		wall_layer.set_cell(Vector2i(x, 0), 1, Vector2i.ZERO)
+		wall_layer.set_cell(Vector2i(x, map_size.y - 1), 1, Vector2i.ZERO)
+	for y in range(map_size.y):
+		wall_layer.set_cell(Vector2i(0, y), 1, Vector2i.ZERO)
+		wall_layer.set_cell(Vector2i(map_size.x - 1, y), 1, Vector2i.ZERO)
+	
+	# 랜덤 장애물 몇 개
+	for i in range(10):
+		var x := randi() % (map_size.x - 4) + 2
+		var y := randi() % (map_size.y - 4) + 2
+		wall_layer.set_cell(Vector2i(x, y), 1, Vector2i.ZERO)
 
 ## 전역 위치를 맵 셀 좌표로 변환
 func get_cell_at(global_pos: Vector2) -> Vector2i:

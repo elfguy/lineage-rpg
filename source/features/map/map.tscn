@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/features/map/map_manager.gd" id="1_mapmanager"]
+
+[node name="Map" type="Node2D" script=ExtResource("1_mapmanager")]
+map_id = &"town"
+map_size = Vector2i(32, 32)
+tile_size = Vector2i(32, 32)
+
+[node name="GroundLayer" type="TileMapLayer" parent="."]
+
+[node name="WallLayer" type="TileMapLayer" parent="."]
+
+[node name="OverlayLayer" type="TileMapLayer" parent="."]

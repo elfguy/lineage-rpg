@@ -1,15 +1,16 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://source/features/map/map_manager.gd" id="1_mapmanager"]
+[ext_resource type="PackedScene" path="res://source/features/map/map.tscn" id="1_map"]
 [ext_resource type="PackedScene" path="res://source/features/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://source/features/ui/hud/hud.tscn" id="3_hud"]
 [ext_resource type="Script" path="res://source/systems/game_starter.gd" id="4_starter"]
 
 [node name="Main" type="Node"]
 
-[node name="MapManager" type="Node2D" parent="." script=ExtResource("1_mapmanager")]
+[node name="Map" parent="." instance=ExtResource("1_map")]
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(512, 384)
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 
